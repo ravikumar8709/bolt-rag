@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Bolt Junk Removal Rag</title>
+    <!-- Web App Title for iOS when pinned to home screen -->
+    <meta name="apple-mobile-web-app-title" content="Your App Name">
+    <!-- Touch Icon for iOS home screen -->
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <!-- Viewport for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Enable full-screen web app mode on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Set status bar style when launched as web app on iOS -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">     
+    <!-- Handheld devices compatibility -->
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="320">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
+      rel="stylesheet">
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous">
+    <style>
+    div#chatMessages::-webkit-scrollbar,
+    .chat-input::-webkit-scrollbar
+     {
+  width: 0px;
+}
+
+/* Track */
+div#chatMessages::-webkit-scrollbar-track,
+.chat-input::-webkit-scrollbar-track
+ {
+  background: #fff;
+}
+
+/* Handle (thumb) */
+div#chatMessages::-webkit-scrollbar-thumb,
+.chat-input::-webkit-scrollbar-thumb
+ {
+  background-color: #888;
+  border-radius: 0px;
+  border: 1px solid #fff;
+}
+
+/* On hover */
+div#chatMessages::-webkit-scrollbar-thumb:hover,
+.chat-input::-webkit-scrollbar-thumb:hover
+
+{
+  background: #fff;
+}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+ 
+
+
+    /* Left Sidebar */
+    .sidebar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;    
+    }
+
+    .logo i {
+      font-size: 1.8rem;
+      color: #667eea;
+    }
+
+    .logo h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .upload-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .upload-area {
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area:hover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .upload-area.dragover {
+      border-color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 2.5rem;
+      color: #a0aec0;
+      margin-bottom: 1rem;
+    }
+
+    .upload-text {
+      font-size: 0.875rem;
+      color: #718096;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-subtext {
+      font-size: 0.75rem;
+      color: #a0aec0;
+    }
+
+    #fileInput {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .selected-files {
+      margin-top: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f7fafc;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+    }
+
+    .file-icon {
+      color: #667eea;
+    }
+
+    .upload-btn {
+      width: 100%;
+      background: #000;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .upload-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .upload-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Progress Section */
+    .progress-section {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .progress-bar-container {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 10px;
+    }
+
+    .progress-text {
+      font-size: 0.8rem;
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    /* Right Chat Area */
+  .chat-container {
+    display: flex
+;
+    flex-direction: column;
+    background: #fff;
+    backdrop-filter: blur(20px);
+    position: relative;
+    z-index: 1;
+    padding-top: 98.98px;
+}
+    .chat-header {
+      padding: 1.5rem 2rem; 
+      background: #000
+    }
+
+    .chat-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      height: 100%;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: #000;
+      color: white;
+    }
+
+    .message.assistant .message-avatar {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+
+    .message-content {
+      background: white;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .message.user .message-content {
+      background:#000;
+      color: white;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .message.assistant .message-content {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e2e8f0;
+    }
+
+    .message-text {
+      font-size: 16px;
+      line-height: 1.6;
+    }    
+    .message-text h1 {
+      font-size: 36px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .message-text h2 {
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .message-text h3 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .message-text h4 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .message-text h5 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .message-text h6 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+    .message-text ol li,
+    .message-text ul li {
+        list-style-position: inside;
+        margin: 4px 0;
+    }
+    .message-text ol li  ol,
+    .message-text ul li  ul {
+        padding-left: 30px;
+    }
+     .message-text table {
+        width: 100%;
+       border-collapse: collapse;
+       border: 1px solid #ccc;
+       margin: 20px 0;
+     }
+     .message-text table th,
+     .message-text table td {
+       padding: 10px;
+       border: 1px solid #eee;
+     }
+
+    .message-text strong,
+    .message-text b {
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .message.assistant .message-text strong,
+    .message.assistant .message-text b {
+      color: #1a202c;
+    }
+
+    .message-text code {
+      background: rgba(0, 0, 0, 0.1);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+    }
+
+    .message-text blockquote {
+      border-left: 3px solid #667eea;
+      padding-left: 1rem;
+      margin: 0.5rem 0;
+      font-style: italic;
+      opacity: 0.9;
+    }
+
+    .message-source {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.8rem;
+      opacity: 0.8;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+.message-source i {
+    position: relative;
+    top: 4px;
+}
+   .message.assistant .message-source {
+    border-top: 1px solid #e2e8f0;
+    color: #000000;
+    font-weight: 800;
+    opacity: 1;
+}
+
+    /* Input Area */
+   .chat-input-container {
+    padding: 15px;
+    border-top: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255);
+    /* box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3); */
+    box-shadow: 0 14px 20px rgba(102, 126, 234, 0.2);
+    border-radius: 15px;
+    position: fixed;
+    bottom: 20px;
+    right: 0;
+    left: 0;
+    max-width: 1110px;
+    margin: auto;
+}
+
+    .input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      /* border: 1px solid #e2e8f0; */
+      border: 1px solid #fff;
+      border-radius:0px;
+      padding: 12px 0px;
+      font-size: 0.9rem;
+      resize: none;
+      min-height: 44px;
+      max-height: 120px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #fff;
+      /* box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); */
+    }
+
+    .send-btn {
+      background: #000;
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Status Messages */
+    .status-message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .status-success {
+      background: rgba(72, 187, 120, 0.1);
+      color: #2f855a;
+      border: 1px solid rgba(72, 187, 120, 0.2);
+    }
+
+    .status-error {
+      background: rgba(245, 101, 101, 0.1);
+      color: #c53030;
+      border: 1px solid rgba(245, 101, 101, 0.2);
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #a0aec0;
+      text-align: center;
+      position: relative;
+    }
+
+    .empty-state::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.3;
+      }
+
+      50% {
+        transform: scale(1.1);
+        opacity: 0.6;
+      }
+    }
+
+    .empty-state img {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: #000;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      border-radius: 8px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .empty-state h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #4a5568;
+      font-weight: 600;
+    }
+
+    .empty-state p {
+      font-size: 0.9rem;
+      max-width: 300px;
+      opacity: 0.8;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .chat-header {
+    padding: 24px 25px!important;
+    
+}
+    }
+    @media (max-width: 1024px) {
+      body .empty-state img {
+  
+    height: 50px;
+    width: 50px;
+}
+.flex-container {
+    
+    padding-top: 80.98px!important;
+}
+.chat-input-container {
+        box-shadow: 0 0 34px 10px rgba(102, 126, 234, 0.2) !important;
+        bottom: 0px !important;
+        border-radius: 0;
+    }
+  .chat-header {
+    padding:15px 25px!important;
+    
+}
+    }
+    @media (max-width: 768px) {
+      
+.message-content {
+     
+    padding: 15px!important;   
+ 
+}
+      .chat-messages {
+    
+    padding:20px 20px 40px !important;
+  
+}
+      .message {
+    
+    max-width: 95%!important;
+}
+      .main-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        padding: 1rem;
+      }
+
+      .chat-messages {
+        padding: 1rem;
+      }
+
+      .chat-input-container {
+        padding: 1rem;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message {
+      animation: fadeInUp 0.3s ease;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+.message.assistant .message-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100px;
+}
+
+
+.message.assistant .message-source a {
+    display: flex;
+    gap: 7px;
+    font-weight: 500;
+}
+.message.assistant .message-source {
+	flex-wrap: wrap;
+}
+
+
+    /* new css */
+
+
+.logo img {
+    width: auto;
+    max-width: 100%;
+    max-height: 50px;
+}
+
+.chat-header {
+    padding: 24px 57px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #000;
+    position: fixed;
+    z-index: 2;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex
+;
+    align-items: center;
+    justify-content: flex-start;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+.chatwrap {
+    height: calc(100vh - 98.98px);
+    display: flex
+;
+    flex-direction: column;
+}
+
+   
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+
+
+   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fff;
+      
+      color: #2d3748;
+      line-height: 1.6;
+}
+.flex-container {
+    display: flex
+;
+    flex-direction: column;
+    height: calc(var(--vh, 1vh) * 100);
+    padding-top: 98.98px;
+}
+.flex-child{
+  flex: 8;
+  /* background-color: #f20; */
+  display: flex;
+ 
+  justify-content: center;
+  overflow: auto;
+}
+.flex-child.child2{
+  flex: 1;
+}
+  </style>
+  </head>
+
+  <body>
+
+    <div class="chat-header">
+        <div class="logo">
+          <img src="/static/bolt-logo.png" alt="Bolt Logo">
+        </div>
+
+      </div>
+    <div class="flex-container">
+      <div class="flex-child">
+          <div class="container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="empty-state">
+                  <i class="fas fa-robot"></i>
+                  <h3>Ready to help!</h3>
+                  <p>Upload your documents and start asking questions about their
+                    content.</p>
+                </div>
+              </div>
+            </div>
+      </div>
+      <div class="flex-child child2">
+       <div class="chat-input-container">
+              <form id="questionForm" class="input-wrapper">
+                <textarea id="questionInput" class="chat-input"
+                  placeholder="Ask me anything about your documents..."
+                  rows="1"></textarea>
+                <button type="submit" class="send-btn" id="sendBtn">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </form>
+              <div id="errorMsg"></div>
+            </div>
+      </div>
+    </div>
+
+
+     <script>
+      function setViewportHeight() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+      window.addEventListener('resize', setViewportHeight);
+      window.addEventListener('load', setViewportHeight);
+      </script>
+    
+
+    <script>
+    const chatHistory = [];
+
+    // Chat functionality
+    function renderChat() {
+      const container = document.getElementById('chatMessages');
+
+      if (chatHistory.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <img src="/static/bolt_fav.png" class="bolt-img" alt="Bolt Logo">
+            <h3>Ready to help!</h3>
+            <p>Start asking questions here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+
+      chatHistory.forEach(chat => {
+        // User message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user';
+        userMessage.innerHTML = `
+          <div class="message-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="message-content">
+            <div class="message-text">${chat.question}</div>
+          </div>
+        `;
+        container.appendChild(userMessage);
+
+        // Assistant message with formatted text
+        const assistantMessage = document.createElement('div');
+        assistantMessage.className = 'message assistant';
+        const formattedAnswer = chat.answer;
+        assistantMessage.innerHTML = `
+          <div class="message-avatar">
+           <img src="/static/bolt_fav.png" alt="Bolt Logo">
+          </div>
+          <div class="message-content">
+            <div class="message-text">${formattedAnswer}</div>
+            <div class="message-source">
+              <i class="fas fa-file-alt"></i>
+              ${formatSourceWithDownload(chat.sourceDocument)}
+            </div>
+          </div>
+        `;
+        container.appendChild(assistantMessage);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+    function formatSourceWithDownload(sourceDocument) {
+    if (!sourceDocument || sourceDocument === "Unknown Document") {
+        return sourceDocument;
+    }
+    
+    // Extract sources from "Sources: source1, source2, source3"
+    const sourcesText = sourceDocument.replace('Sources: ', '');
+    const sources = sourcesText.split(', ');
+    
+    const downloadLinks = sources.map(source => {
+        const cleanSource = source.trim();
+        return `<a href="/download/${cleanSource}" target="_blank" class="source-link" title="Download ${cleanSource}">
+                  <i class="fas fa-download"></i> ${cleanSource}
+                </a>`;
+    }).join(', ');
+    
+    return `Sources: ${downloadLinks}`;
+}
+
+    // Question form
+    const questionForm = document.getElementById('questionForm');
+    const questionInput = document.getElementById('questionInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const errorMsg = document.getElementById('errorMsg');
+
+    // Auto-resize textarea
+    questionInput.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    questionInput.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    questionForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  }
+});
+    questionForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = questionInput.value.trim();
+
+      if (!question) return;
+
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      errorMsg.innerHTML = '';
+
+      try {
+        const response = await fetch('/ask-question/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          chatHistory.push({
+            question,
+            answer: data.final_answer || 'No answer found.',
+            sourceDocument: data.source_document || 'Unknown Document'
+          });
+
+          renderChat();
+          questionInput.value = '';
+          questionInput.style.height = 'auto';
+        } else {
+          errorMsg.innerHTML = `<div class="status-message status-error">${data.detail || 'Something went wrong.'}</div>`;
+        }
+
+      } catch (error) {
+        errorMsg.innerHTML = `<div class="status-message status-error">Network error: ${error.message}</div>`;
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+      }
+    });
+
+    // Initialize
+    renderChat();
+  </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+      integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+      crossorigin="anonymous"></script>
+  </body>
+
+</html>
